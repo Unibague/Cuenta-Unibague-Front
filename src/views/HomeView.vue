@@ -52,7 +52,7 @@ export default {
         {
           title: 'Olvidé mi usuario',
           icon: 'fa-solid fa-user-xmark',
-          to: {name: 'rememberEmailView'}
+          to: {name: 'RememberEmailView'}
         },
 
         {

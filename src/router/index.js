@@ -12,10 +12,12 @@ const routes = [
         path: '/change-password', name: 'changePasswordView', component: () => import('../views/ChangePasswordView.vue')
     },
     {
-        path: '/change-alternate-email', name: 'changeAlternateEmailView', component: () => import('../views/ChangeAlternateEmailView.vue')
+        path: '/change-alternate-email',
+        name: 'changeAlternateEmailView',
+        component: () => import('../views/ChangeAlternateEmailView.vue')
     },
     {
-        path: '/remember-email', name: 'rememberEmailView', component: () => import('../views/RememberEmailView.vue')
+        path: '/remember-email', name: 'RememberEmailView', component: () => import('../views/RememberEmailView.vue')
     }
 ]
 

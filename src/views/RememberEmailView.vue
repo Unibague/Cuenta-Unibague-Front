@@ -21,7 +21,7 @@
 
         <div class="text-left my-4">
           <label for="birthday" class="font-semibold block my-2">Fecha de nacimiento</label>
-          <input class="rounded border px-3 py-1 w-full" type="date" v-model:="birthday.value" id="birthday"/>
+          <input class="rounded border px-3 py-1 w-full" type="date" v-model="birthday.value" id="birthday"/>
         </div>
 
 
@@ -41,6 +41,7 @@
                 class=" rounded py-2 text-center w-full text-white" style="background-color: #0f1f39">
               Cambiar
             </button>
+
           </div>
         </div>
 
@@ -51,6 +52,19 @@
         <p>
           {{ message }}
         </p>
+
+        <button v-if="notFound"
+                @click="showForm = true"
+                class=" rounded py-2 text-center mt-3 w-full text-white" style="background-color: #0f1f39">
+          Ir atrás
+        </button>
+
+        <router-link v-else
+                     class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
+                     :to="{name: 'home'}">
+
+          Ir atrás
+        </router-link>
       </div>
 
     </div>
@@ -61,15 +75,17 @@
 
 <script>
 import MainLayout from "@/layouts/MainLayout";
-import valid from "@/helpers/valid_email";
+import axios from "axios";
 
 export default {
   name: "RememberEmailView",
   components: {
     MainLayout
   },
+
   data() {
     return {
+      notFound: true,
       showForm: true,
       message: 'Numero de documento no encontrado',
       documentNumber: {
@@ -80,18 +96,35 @@ export default {
       }
     }
   },
+  computed: {
+    isFormValid() {
+      return (this.documentNumber.value !== '' && this.birthday.value !== '');
+    }
+  },
   methods: {
-    submitForm() {
-      //Validar que el numero de documento esté bien
+    async submitForm() {
+      if (!this.isFormValid) {
+        return;
+      }
+      const domain = 'http://cuenta-unibague.test';
+      const url = domain + '/rememberEmail';
 
-      //Recibir la respuesta
-
-
-      //cambiar el mensaje y mostrarlo
-      this.message = 'Hemos encontrado satisfactoriamente tu correo';
+      const data = {
+        documentNumber: this.documentNumber.value,
+        birthday: this.birthday.value,
+      }
+      try {
+        let request = await axios.post(url, data);
+        this.message = request.data.message;
+        this.notFound = false;
+      } catch (e) {
+        this.message = e.response.data.message
+      }
       this.showForm = false;
     },
+
+
   },
-  watch: {}
+
 }
 </script>
