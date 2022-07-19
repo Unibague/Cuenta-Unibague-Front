@@ -11,7 +11,7 @@
            class="p-5 border shadow rounded-lg bg-gray-100 md:w-1/2 lg:w-1/3">
         <div class="text-left my-4">
           <label for="email" class="font-semibold block my-2">Correo Unibagué</label>
-          <input type="email" id="email" v-model="email.value" placeholder="Julio.Buitrago"
+          <input type="email" id="email" v-model="email.value" placeholder="julio.buitrago@estudiantesunibague.edu.co"
                  class="rounded border px-3 py-1 w-full">
 
           <p class="mt-3">
@@ -49,6 +49,19 @@
         <p>
           {{ message }}
         </p>
+
+        <button v-if="notFound"
+                @click="showForm = true"
+                class=" rounded py-2 text-center mt-3 w-full text-white" style="background-color: #0f1f39">
+          Ir atrás
+        </button>
+
+        <router-link v-else
+                     class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
+                     :to="{name: 'home'}">
+
+          Ir atrás
+        </router-link>
       </div>
 
     </div>
@@ -60,6 +73,7 @@
 <script>
 import MainLayout from "@/layouts/MainLayout";
 import valid from "@/helpers/valid_email";
+import axios from "axios";
 
 export default {
   name: "RecoverPassword",
@@ -68,6 +82,7 @@ export default {
   },
   data() {
     return {
+      notFound: true,
       showForm: true,
       message: 'Ha ocurrido un error. Por favor vuelve a intentarlo',
       email: {
@@ -77,14 +92,28 @@ export default {
     }
   },
   methods: {
-    submitForm() {
+    async submitForm() {
       //Validar que el formulario esté bien
 
-      //Recibir la respuesta
+      if (!this.isFormValid) {
+        return;
+      }
 
-      //cambiar el mensaje y mostrarlo
-      this.message = 'Hemos enviado a ju*****@gmail.com la información de tu cuenta unibagué.';
+      const domain = 'http://cuenta-unibague.test';
+      const url = domain + '/recoverPassword';
+
+      const data = {
+        email: this.email.value,
+      }
+      try {
+        let request = await axios.post(url, data);
+        this.message = request.data.message;
+        this.notFound = false;
+      } catch (e) {
+        this.message = e.response.data.message
+      }
       this.showForm = false;
+
     },
     getIcon(errorName) {
       if (this.email.value.length === 0) {

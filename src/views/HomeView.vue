@@ -63,7 +63,7 @@ export default {
         {
           title: 'Perdí acceso a mi correo alterno',
           icon: 'fa-solid fa-circle-exclamation',
-          to: {name: 'home'}
+          to: {name: 'recoverAlternateEmailView'}
         },
       ]
     }
