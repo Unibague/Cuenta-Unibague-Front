@@ -16,7 +16,7 @@
 
           <p class="mt-3">
             <span v-html="getIcon('NOT_VALID_EMAIL')"></span>
-            Debe ingresar un correo válido
+            Debes ingresar un correo válido
           </p>
 
         </div>

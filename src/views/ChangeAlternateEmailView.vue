@@ -17,6 +17,10 @@
           <label for="email" class="font-semibold block my-2">Correo Unibagué</label>
           <input type="text" id="email" v-model="email.value" placeholder="Miguel.Mateus"
                  class="rounded border px-3 py-1 w-full">
+          <p class="mt-3">
+            <span v-html="getIcon('NOT_VALID_EMAIL','email')"></span>
+            Debe ingresar un correo válido
+          </p>
         </div>
 
         <div class="text-left mt-4">
@@ -31,7 +35,7 @@
                  class="rounded border px-3 py-1 w-full">
 
           <p class="mt-3">
-            <span v-html="getIcon('NOT_VALID_EMAIL')"></span>
+            <span v-html="getIcon('NOT_VALID_EMAIL','alternateEmail')"></span>
             Debe ingresar un correo válido
           </p>
 
@@ -57,8 +61,10 @@
 
           <div class="">
             <button
+                :disabled="!isFormValid"
                 @click="submitForm"
-                class=" rounded py-2 text-center w-full text-white" style="background-color: #0f1f39">
+                style="background-color: #0f1f39"
+                class="rounded py-2 text-center w-full text-white">
               Cambiar
             </button>
           </div>
@@ -71,10 +77,22 @@
         <p>
           {{ message }}
         </p>
+
+        <button v-if="notFound"
+                @click="showForm = true"
+                class=" rounded py-2 text-center mt-3 w-full text-white" style="background-color: #0f1f39">
+          Ir atrás
+        </button>
+
+        <router-link v-else
+                     class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
+                     :to="{name: 'home'}">
+
+          Ir atrás
+        </router-link>
+
       </div>
-
     </div>
-
 
   </MainLayout>
 </template>
@@ -82,6 +100,7 @@
 <script>
 import MainLayout from "@/layouts/MainLayout";
 import valid from "@/helpers/valid_email";
+import axios from "axios";
 
 export default {
   name: "ChangeAlternateEmailView",
@@ -90,10 +109,12 @@ export default {
   },
   data() {
     return {
+      notFound:false,
       showForm: true,
       message: 'Ha ocurrido un error. Por favor vuelve a intentarlo',
       email: {
-        value: ''
+        value: '',
+        errors: []
       },
       password: {
         value: ''
@@ -109,21 +130,37 @@ export default {
     }
   },
   methods: {
-    submitForm() {
+    async submitForm() {
       //Validar que el formulario esté bien
+      if (!this.isFormValid) {
+        return;
+      }
 
-      //Recibir la respuesta
+      const domain = 'http://cuenta-unibague.test';
+      const url = domain + '/changeAlternateEmail';
 
+      const data = {
+        email: this.email.value,
+        alternateEmail: this.alternateEmail.value,
+        confirmAlternateEmail: this.confirmAlternateEmail.value,
+        password: this.password.value,
+      }
+      try {
+        let request = await axios.post(url, data);
+        this.message = request.data.message;
+        this.notFound = false;
+      } catch (e) {
+        this.notFound = true;
+        this.message = e.response.data.message
+      }
 
-      //cambiar el mensaje y mostrarlo
-      this.message = 'Tu correo alterno ha sido cambiado exitosamente';
       this.showForm = false;
     },
-    getIcon(errorName) {
-      if (this.alternateEmail.value.length === 0) {
+    getIcon(errorName, property) {
+      if (this[property].value.length === 0) {
         return '';
       }
-      if (this.alternateEmail.errors.includes(errorName)) {
+      if (this[property].errors.includes(errorName)) {
         return '<i class="fa-solid fa-circle-xmark" style="color:red"></i>';
       } else {
         return '<i class="fa-solid fa-circle-check" style="color:green"></i>';
@@ -131,6 +168,16 @@ export default {
     }
   },
   watch: {
+    'email.value'(newValue, oldValue) {
+      if (valid(newValue)) {
+        this.email.errors = [];
+      } else {
+        if (!this.email.errors.includes('NOT_VALID_EMAIL')) {
+          this.email.errors.push('NOT_VALID_EMAIL');
+        }
+      }
+    },
+
     'alternateEmail.value'(newValue, oldValue) {
       if (valid(newValue)) {
         this.alternateEmail.errors = [];
@@ -149,6 +196,19 @@ export default {
         }
       }
     }
+  },
+
+  computed: {
+    isFormValid() {
+
+      return (this.confirmAlternateEmail.errors.length === 0
+          && this.alternateEmail.errors.length === 0
+          && this.email.errors.length === 0
+          && this.email.value !== ''
+          && this.confirmAlternateEmail.value !== ''
+          && this.alternateEmail.value !== '');
+    },
+
   }
 }
 </script>
