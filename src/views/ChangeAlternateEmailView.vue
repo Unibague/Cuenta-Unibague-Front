@@ -14,13 +14,17 @@
       <div v-if="showForm"
            class="p-5 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
         <div class="text-left my-4">
-          <label for="email" class="font-semibold block my-2">Correo Unibagué</label>
-          <input type="text" id="email" v-model="email.value" placeholder="Miguel.Mateus"
+          <label for="user" class="font-semibold block my-2">Usuario Unibagué</label>
+          <input type="text" id="user" v-model="user.value" placeholder="Miguel.Mateus"
                  class="rounded border px-3 py-1 w-full">
-          <p class="mt-3">
-            <span v-html="getIcon('NOT_VALID_EMAIL','email')"></span>
-            Debe ingresar un correo válido
-          </p>
+        </div>
+
+        <div class="text-left my-4">
+          <label for="role" class="font-semibold block my-2">Eres un ...</label>
+          <select class="rounded border px-3 py-1.5 w-full bg-white" type="date" v-model="role.value" id="role">
+            <option value="0">Estudiante o egresado</option>
+            <option value="1">Administrativo</option>
+          </select>
         </div>
 
         <div class="text-left mt-4">
@@ -49,10 +53,12 @@
             Debe coincidir con el valor ingresado anteriormente
           </p>
         </div>
+
+
+
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 justify-between w-full mt-4 ">
-
           <div class="">
-
             <router-link class="rounded py-2 text-center w-full bg-gray-200 block"
                          :to="{name:'home'}">
               Ir atrás
@@ -61,7 +67,8 @@
 
           <div class="">
             <button
-                :disabled="!isFormValid"
+                :disabled="(!isFormValid || isProcessing)"
+                :class="{'cursor-not-allowed':(!isFormValid || isProcessing)}"
                 @click="submitForm"
                 style="background-color: #0f1f39"
                 class="rounded py-2 text-center w-full text-white">
@@ -73,7 +80,7 @@
       </div>
 
       <div v-else
-           class="p-5 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
+           class="p-5 border shadow rounded-lg bg-gray-100 md:w-1/2 lg:w-1/4">
         <p>
           {{ message }}
         </p>
@@ -109,15 +116,18 @@ export default {
   },
   data() {
     return {
-      notFound:false,
+      isProcessing:false,
+      notFound: false,
       showForm: true,
       message: 'Ha ocurrido un error. Por favor vuelve a intentarlo',
-      email: {
+      user: {
         value: '',
-        errors: []
       },
       password: {
         value: ''
+      },
+      role: {
+        value: 0
       },
       alternateEmail: {
         value: '',
@@ -129,21 +139,23 @@ export default {
       }
     }
   },
+
   methods: {
     async submitForm() {
       //Validar que el formulario esté bien
       if (!this.isFormValid) {
         return;
       }
-
+      this.isProcessing = true;
       const domain = 'http://cuenta-unibague.test';
       const url = domain + '/changeAlternateEmail';
 
       const data = {
-        email: this.email.value,
+        user: this.user.value,
         alternateEmail: this.alternateEmail.value,
         confirmAlternateEmail: this.confirmAlternateEmail.value,
         password: this.password.value,
+        role: this.role.value,
       }
       try {
         let request = await axios.post(url, data);
@@ -153,7 +165,7 @@ export default {
         this.notFound = true;
         this.message = e.response.data.message
       }
-
+      this.isProcessing = false;
       this.showForm = false;
     },
     getIcon(errorName, property) {
@@ -168,15 +180,6 @@ export default {
     }
   },
   watch: {
-    'email.value'(newValue, oldValue) {
-      if (valid(newValue)) {
-        this.email.errors = [];
-      } else {
-        if (!this.email.errors.includes('NOT_VALID_EMAIL')) {
-          this.email.errors.push('NOT_VALID_EMAIL');
-        }
-      }
-    },
 
     'alternateEmail.value'(newValue, oldValue) {
       if (valid(newValue)) {
@@ -203,8 +206,7 @@ export default {
 
       return (this.confirmAlternateEmail.errors.length === 0
           && this.alternateEmail.errors.length === 0
-          && this.email.errors.length === 0
-          && this.email.value !== ''
+          && this.user.value !== ''
           && this.confirmAlternateEmail.value !== ''
           && this.alternateEmail.value !== '');
     },

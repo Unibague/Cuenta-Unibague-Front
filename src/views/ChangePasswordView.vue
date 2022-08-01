@@ -12,16 +12,19 @@
       <!--FORM CONTAINER-->
       <div v-if="showForm" class="px-3 py-4 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
 
-        <div class="text-left mb-2">
-          <label for="user" class="font-semibold block mb-2">Usuario Unibagué</label>
-          <input type="text" id="user" v-model="user.value" placeholder="juan.ospina"
-                 class="rounded border px-3 py-1 w-full">
-        </div>
-        <div class="text-left mt-4">
-          <label for="password" class="font-semibold block my-2">Contraseña actual</label>
-          <input type="password" id="password" v-model="password.value"
-                 class="rounded border px-3 py-1 w-full">
-        </div>
+        <template v-if="!isVerified">
+          <div class="text-left mb-2">
+            <label for="user" class="font-semibold block mb-2">Usuario Unibagué</label>
+            <input type="text" id="user" v-model="user.value" placeholder="juan.ospina"
+                   class="rounded border px-3 py-1 w-full">
+          </div>
+          <div class="text-left mt-4">
+            <label for="password" class="font-semibold block my-2">Contraseña actual</label>
+            <input type="password" id="password" v-model="password.value"
+                   class="rounded border px-3 py-1 w-full">
+          </div>
+        </template>
+
         <div class="text-left mt-4">
           <label for="newPassword" class="font-semibold block my-2">Nueva contraseña</label>
 
@@ -76,16 +79,18 @@
       <div v-else class="px-3 py-4 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
         {{ message }}
 
-        <div class="grid grid-cols-1  gap-x-8 justify-between w-full mt-4 ">
+        <button v-if="notFound"
+                @click="showForm = true"
+                class=" rounded py-2 text-center mt-3 w-full text-white" style="background-color: #0f1f39">
+          Ir atrás
+        </button>
 
-          <div>
-            <button
-                class="rounded py-2 text-center w-full text-white" style="background-color: #0f1f39"
-                @click="showForm = true">
-              Ir atrás
-            </button>
-          </div>
-        </div>
+        <router-link v-else
+                     class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
+                     :to="{name: 'home'}">
+          Ir atrás
+        </router-link>
+
       </div>
     </div>
 
@@ -105,6 +110,9 @@ export default {
   },
   data() {
     return {
+      notFound: true,
+      isVerified: false,
+      token: '',
       message: '',
       showForm: true,
       user: {
@@ -123,29 +131,74 @@ export default {
       },
     }
   },
+
+  created() {
+    this.isVerified = true;
+    this.verifyHasToken();
+  },
+
   computed: {
     isFormValid() {
       return (this.newPassword.value.length > 0 && this.newPassword.errors.length === 0 && this.confirmNewPassword.value === this.newPassword.value);
     }
   },
   methods: {
+    async verifyHasToken() {
+      const token = this.$route.query.token;
+
+      //undefined, null, or empty string are not allowed
+      if (token === undefined || token === null || token === '') {
+        this.isVerified = false;
+        return;
+      }
+      this.token = token;
+      //The user provided a token, lets check if is a valid token
+      const domain = 'http://cuenta-unibague.test';
+      const url = domain + '/verifyToken';
+
+      const data = {
+        token: this.token,
+      }
+      try {
+        await axios.post(url, data);
+        this.isVerified = true;
+      } catch (e) {
+        this.isVerified = false;
+      }
+    },
+
     async submitForm() {
       if (!this.isFormValid) {
         return;
       }
       const domain = 'http://cuenta-unibague.test';
       const url = domain + '/changePassword';
-
-      const data = {
-        user: this.user.value,
-        password: this.password.value,
-        newPassword: this.newPassword.value,
-        confirmNewPassword: this.confirmNewPassword.value,
-        role: 1,
+      let data = {};
+      if (this.isVerified) {
+        data = {
+          newPassword: this.newPassword.value,
+          confirmNewPassword: this.confirmNewPassword.value,
+          token: this.token,
+          role: 1
+        }
+      } else {
+        data = {
+          user: this.user.value,
+          password: this.password.value,
+          newPassword: this.newPassword.value,
+          confirmNewPassword: this.confirmNewPassword.value,
+          role: 1
+        }
       }
 
-      let request = await axios.post(url, data);
-      this.message = request.data.message;
+      try {
+        let request = await axios.post(url, data);
+        this.message = request.data.message;
+        this.notFound = false;
+      } catch (e) {
+        this.notFound = true;
+        this.message = e.response.data.message
+      }
       this.showForm = false;
     },
 

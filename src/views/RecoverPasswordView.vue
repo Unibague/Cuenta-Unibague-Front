@@ -91,6 +91,8 @@ export default {
       }
     }
   },
+
+
   methods: {
     async submitForm() {
       //Validar que el formulario esté bien

@@ -3,10 +3,10 @@
     <div class="h-full w-full flex flex-col items-center justify-center">
       <div class="mb-10">
         <h1 class="text-3xl p-1">
-          Recuerda tu correo Unibague
+          Recuerda tu usuario Unibague
         </h1>
         <p class="text-lg p-1">
-          Si deseas recordar tu correo ingresa tu numero de documento (Sin puntos o comas)
+          Si deseas recordar tu usuario ingresa tu numero de documento (Sin puntos o comas)
         </p>
       </div>
 
@@ -25,6 +25,15 @@
         </div>
 
 
+        <div class="text-left my-4">
+          <label for="role" class="font-semibold block my-2">Eres un</label>
+          <select class="rounded border px-3 py-1.5 w-full bg-white" type="date" v-model="role.value" id="role">
+            <option value="0">Estudiante o egresado</option>
+            <option value="1">Administrativo</option>
+          </select>
+        </div>
+
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 justify-between w-full mt-4 ">
 
           <div class="">
@@ -37,9 +46,11 @@
 
           <div class="">
             <button
+                :disabled="!isFormValid"
+                :class="{'cursor-not-allowed':!isFormValid}"
                 @click="submitForm"
                 class=" rounded py-2 text-center w-full text-white" style="background-color: #0f1f39">
-              Cambiar
+              Recordar
             </button>
 
           </div>
@@ -93,6 +104,9 @@ export default {
       },
       birthday: {
         value: ''
+      },
+      role: {
+        value: 0
       }
     }
   },
@@ -112,6 +126,7 @@ export default {
       const data = {
         documentNumber: this.documentNumber.value,
         birthday: this.birthday.value,
+        role: this.role.value,
       }
       try {
         let request = await axios.post(url, data);
