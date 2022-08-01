@@ -18,6 +18,15 @@
             <input type="text" id="user" v-model="user.value" placeholder="juan.ospina"
                    class="rounded border px-3 py-1 w-full">
           </div>
+
+          <div class="text-left my-4">
+            <label for="role" class="font-semibold block my-2">Eres un ...</label>
+            <select class="rounded border px-3 py-1.5 w-full bg-white" type="date" v-model="role.value" id="role">
+              <option value="0">Estudiante o egresado</option>
+              <option value="1">Administrativo</option>
+            </select>
+          </div>
+
           <div class="text-left mt-4">
             <label for="password" class="font-semibold block my-2">Contraseña actual</label>
             <input type="password" id="password" v-model="password.value"
@@ -121,6 +130,9 @@ export default {
       password: {
         value: '',
       },
+      role: {
+        value: 0,
+      },
       newPassword: {
         value: '',
         errors: ''
@@ -179,7 +191,7 @@ export default {
           newPassword: this.newPassword.value,
           confirmNewPassword: this.confirmNewPassword.value,
           token: this.token,
-          role: 1
+          role: this.role.value
         }
       } else {
         data = {
@@ -187,7 +199,7 @@ export default {
           password: this.password.value,
           newPassword: this.newPassword.value,
           confirmNewPassword: this.confirmNewPassword.value,
-          role: 1
+          role: this.role.value
         }
       }
 
