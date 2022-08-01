@@ -10,15 +10,23 @@
       <div v-if="showForm"
            class="p-5 border shadow rounded-lg bg-gray-100 md:w-1/2 lg:w-1/3">
         <div class="text-left my-4">
-          <label for="email" class="font-semibold block my-2">Correo Unibagué</label>
-          <input type="email" id="email" v-model="email.value" placeholder="julio.buitrago@estudiantesunibague.edu.co"
+          <label for="user" class="font-semibold block my-2">Usuario Unibagué</label>
+          <input type="user" id="user" v-model="user.value" placeholder="julio.buitrago"
                  class="rounded border px-3 py-1 w-full">
 
-          <p class="mt-3">
-            <span v-html="getIcon('NOT_VALID_EMAIL')"></span>
-            Debes ingresar un correo válido
-          </p>
+          <!--          <p class="mt-3">
+                      <span v-html="getIcon('NOT_VALID_EMAIL')"></span>
+                      Debes ingresar un correo válido
+                    </p>-->
 
+        </div>
+
+        <div class="text-left my-4">
+          <label for="role" class="font-semibold block my-2">Eres un ...</label>
+          <select class="rounded border px-3 py-1.5 w-full bg-white" type="date" v-model="role.value" id="role">
+            <option value="0">Estudiante o egresado</option>
+            <option value="1">Administrativo</option>
+          </select>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 justify-between w-full mt-4 ">
@@ -33,8 +41,8 @@
 
           <div class="">
             <button
-                :disabled="!isFormValid"
-                :class="{'cursor-not-allowed':!isFormValid}"
+                :disabled="(!isFormValid || isProcessing)"
+                :class="{'cursor-not-allowed':(!isFormValid || isProcessing)}"
                 @click="submitForm"
                 class="rounded py-2 text-center w-full text-white mt-2" style="background-color: #0f1f39">
               Recuperar
@@ -82,19 +90,22 @@ export default {
   },
   data() {
     return {
+      isProcessing: false,
       notFound: true,
       showForm: true,
       message: 'Ha ocurrido un error. Por favor vuelve a intentarlo',
-      email: {
+      user: {
         value: '',
         errors: []
+      },
+      role: {
+        value: 0,
       }
     }
   },
-
-
   methods: {
     async submitForm() {
+      this.isProcessing = true;
       //Validar que el formulario esté bien
 
       if (!this.isFormValid) {
@@ -105,7 +116,8 @@ export default {
       const url = domain + '/recoverPassword';
 
       const data = {
-        email: this.email.value,
+        user: this.user.value,
+        role: this.role.value,
       }
       try {
         let request = await axios.post(url, data);
@@ -115,33 +127,34 @@ export default {
         this.message = e.response.data.message
       }
       this.showForm = false;
-
+      this.isProcessing = false;
     },
     getIcon(errorName) {
-      if (this.email.value.length === 0) {
+      if (this.user.value.length === 0) {
         return '';
       }
-      if (this.email.errors.includes(errorName)) {
+      if (this.user.errors.includes(errorName)) {
         return '<i class="fa-solid fa-circle-xmark" style="color:red"></i>';
       } else {
         return '<i class="fa-solid fa-circle-check" style="color:green"></i>';
       }
     }
   },
-  watch: {
-    'email.value'(newValue) {
+  /*watch: {
+    'user.value'(newValue) {
       if (valid(newValue)) {
-        this.email.errors = [];
+        this.user.errors = [];
       } else {
-        if (!this.email.errors.includes('NOT_VALID_EMAIL')) {
-          this.email.errors.push('NOT_VALID_EMAIL');
+        if (!this.user.errors.includes('NOT_VALID_EMAIL')) {
+          this.user.errors.push('NOT_VALID_EMAIL');
         }
       }
     },
-  },
+  },*/
   computed: {
     isFormValid() {
-      return (this.email.value.length > 0 && !this.email.errors.includes('NOT_VALID_EMAIL'));
+      return (this.user.value.length > 0);
+      // return (this.user.value.length > 0 && !this.user.errors.includes('NOT_VALID_EMAIL'));
     }
   }
 }
