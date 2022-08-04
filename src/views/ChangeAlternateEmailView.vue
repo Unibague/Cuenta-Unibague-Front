@@ -147,7 +147,7 @@ export default {
         return;
       }
       this.isProcessing = true;
-      const domain = 'http://cuenta-unibague.test';
+      const domain = process.env.VUE_APP_DOMAIN;
       const url = domain + '/changeAlternateEmail';
 
       const data = {

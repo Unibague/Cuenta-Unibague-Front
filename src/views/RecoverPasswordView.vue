@@ -112,7 +112,7 @@ export default {
         return;
       }
 
-      const domain = 'http://cuenta-unibague.test';
+      const domain = process.env.VUE_APP_DOMAIN;
       const url = domain + '/recoverPassword';
 
       const data = {

@@ -165,7 +165,7 @@ export default {
       }
       this.token = token;
       //The user provided a token, lets check if is a valid token
-      const domain = 'http://cuenta-unibague.test';
+      const domain = process.env.VUE_APP_DOMAIN;
       const url = domain + '/verifyToken';
 
       const data = {
@@ -183,7 +183,7 @@ export default {
       if (!this.isFormValid) {
         return;
       }
-      const domain = 'http://cuenta-unibague.test';
+      const domain = process.env.VUE_APP_DOMAIN;
       const url = domain + '/changePassword';
       let data = {};
       if (this.isVerified) {
