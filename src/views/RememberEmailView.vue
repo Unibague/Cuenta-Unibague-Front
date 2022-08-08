@@ -133,6 +133,10 @@ export default {
         this.message = request.data.message;
         this.notFound = false;
       } catch (e) {
+        if (e.response.data['redirect']) {
+          window.location.href = e.response.data['redirect'];
+          return;
+        }
         this.message = e.response.data.message
       }
       this.showForm = false;
