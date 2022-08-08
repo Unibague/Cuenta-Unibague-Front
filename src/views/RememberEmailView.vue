@@ -134,6 +134,7 @@ export default {
         this.notFound = false;
       } catch (e) {
         if (e.response.data['redirect']) {
+          console.log('redirect');
           window.location.href = e.response.data['redirect'];
           return;
         }
