@@ -2,6 +2,7 @@
   Options -MultiViews
 </IfModule>
 
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
