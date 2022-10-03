@@ -6,7 +6,7 @@
           Recuerda tu usuario Unibague
         </h1>
         <p class="text-lg p-1">
-          Si deseas recordar tu usuario ingresa tu numero de documento (Sin puntos o comas)
+          Si deseas recordar tu usuario ingresa tu numero de documento (sin puntos o comas)
         </p>
       </div>
 
@@ -60,8 +60,7 @@
 
       <div v-else
            class="p-5 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
-        <p>
-          {{ message }}
+        <p v-html="message">
         </p>
 
         <button v-if="notFound"
@@ -73,7 +72,6 @@
         <router-link v-else
                      class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
                      :to="{name: 'home'}">
-
           Ir atrás
         </router-link>
       </div>
