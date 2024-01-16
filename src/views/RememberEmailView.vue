@@ -6,15 +6,14 @@
           Recuerda tu usuario Unibague
         </h1>
         <p class="text-lg p-1">
-          Si deseas recordar tu usuario ingresa tu numero de documento (sin puntos o comas)
+          Si deseas recordar tu usuario ingresa tu número de documento (sin puntos o comas)
         </p>
       </div>
-
 
       <div v-if="showForm"
            class="p-5 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
         <div class="text-left my-4">
-          <label for="Ndocument" class="font-semibold block my-2">Numero de documento</label>
+          <label for="Ndocument" class="font-semibold block my-2">Número de documento</label>
           <input type="text" id="Ndocument" v-model="documentNumber.value" placeholder=""
                  class="rounded border px-3 py-1 w-full">
         </div>
@@ -75,7 +74,6 @@
           Ir atrás
         </router-link>
       </div>
-
     </div>
 
 
@@ -96,7 +94,7 @@ export default {
     return {
       notFound: true,
       showForm: true,
-      message: 'Numero de documento no encontrado',
+      message: 'Número de documento no encontrado',
       documentNumber: {
         value: ''
       },

@@ -7,8 +7,6 @@
         </h1>
 
         <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full mt-4">
-
-
           <router-link
               class="h-60 text-white p-8 flex flex-col justify-center items-center rounded-2xl shadow-xl cursor-pointer"
               style="background-color: #0f1f39"

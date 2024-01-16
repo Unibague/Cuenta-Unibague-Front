@@ -54,9 +54,6 @@
           </p>
         </div>
 
-
-
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 justify-between w-full mt-4 ">
           <div class="">
             <router-link class="rounded py-2 text-center w-full bg-gray-200 block"
