@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkcuenta"]=self["webpackChunkcuenta"]||[]).push([[392],{2007:function(e,n,t){t.r(n),t.d(n,{default:function(){return i}});var u=function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("div")},r=[],l=t(9699),a={name:"recoverAlternateEmailView",beforeMount(){window.open("https://forms.gle/Ri5Z5aHtX2RrUJbp9","_blank"),l.Z.push({name:"home"})}},c=a,o=t(1001),s=(0,o.Z)(c,u,r,!1,null,null,null),i=s.exports}}]);
+//# sourceMappingURL=392.10a4e9c9.js.map
