@@ -158,6 +158,9 @@ export default {
     async verifyHasToken() {
       const token = this.$route.query.token;
 
+      console.log(token, "GET THE TOKEN FROM URL");
+
+
       //undefined, null, or empty string are not allowed
       if (token === undefined || token === null || token === '') {
         this.isVerified = false;
@@ -171,6 +174,9 @@ export default {
       const data = {
         token: this.token,
       }
+
+      console.log(url,data, "DATA BEING SENT TO THE BACK");
+
       try {
         await axios.post(url, data);
         this.isVerified = true;
