@@ -146,7 +146,7 @@ export default {
 
   created() {
     this.isVerified = true;
-    this.verifyHasToken();
+    // this.verifyHasToken();
   },
 
   computed: {
@@ -159,7 +159,6 @@ export default {
       const token = this.$route.query.token;
 
       console.log(token, "GET THE TOKEN FROM URL");
-
 
       //undefined, null, or empty string are not allowed
       if (token === undefined || token === null || token === '') {
