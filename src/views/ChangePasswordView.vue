@@ -11,7 +11,6 @@
       </div>
       <!--FORM CONTAINER-->
       <div v-if="showForm" class="px-3 py-4 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
-
         <template v-if="!isVerified">
           <div class="text-left mb-2">
             <label for="user" class="font-semibold block mb-2">Usuario Unibagué</label>
@@ -146,7 +145,7 @@ export default {
 
   created() {
     this.isVerified = true;
-    // this.verifyHasToken();
+    this.verifyHasToken();
   },
 
   computed: {

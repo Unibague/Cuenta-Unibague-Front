@@ -8,7 +8,6 @@
       </div>
       <div class="h-14 flex items-center text-white">
         <router-link :to="{name:'home'}" class="mx-4">Inicio</router-link>
-        <router-link :to="{name:'home'}" class="mx-4">Soporte</router-link>
       </div>
     </div>
   </div>
