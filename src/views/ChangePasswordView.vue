@@ -131,8 +131,8 @@ export default {
         value: '',
       },
       role: {
-        value: 0,
-      },
+  value: 'Administrativo',
+},
       newPassword: {
         value: '',
         errors: ''
