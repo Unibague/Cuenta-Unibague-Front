@@ -184,25 +184,27 @@ export default {
       if (!this.isFormValid) {
         return;
       }
+      const role = Number(this.role.value);
       const domain = process.env.VUE_APP_DOMAIN;
       const url = domain + '/changePassword';
       let data = {};
-      if (this.isVerified) {
-        data = {
-          newPassword: this.newPassword.value,
-          confirmNewPassword: this.confirmNewPassword.value,
-          token: this.token,
-          role: this.role.value
-        }
-      } else {
-        data = {
-          user: this.user.value,
-          password: this.password.value,
-          newPassword: this.newPassword.value,
-          confirmNewPassword: this.confirmNewPassword.value,
-          role: this.role.value
-        }
-      }
+     if (this.isVerified) {
+  data = {
+    newPassword: this.newPassword.value,
+    confirmNewPassword: this.confirmNewPassword.value,
+    token: this.token,
+    role: role
+  }
+} else {
+  data = {
+    user: this.user.value,
+    password: this.password.value,
+    newPassword: this.newPassword.value,
+    confirmNewPassword: this.confirmNewPassword.value,
+    role: role
+  }
+}
+
 
       try {
         let request = await axios.post(url, data);
