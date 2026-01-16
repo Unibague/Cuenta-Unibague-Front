@@ -21,8 +21,9 @@
           <div class="text-left my-4">
             <label for="role" class="font-semibold block my-2">Eres un ...</label>
             <select class="rounded border px-3 py-1.5 w-full bg-white" type="date" v-model="role.value" id="role">
-              <option value="0">Estudiante o egresado</option>
-              <option value="1">Administrativo</option>
+              <option value="Estudiante">Estudiante o egresado</option>
+              <option value="Administrativo">Administrativo</option>
+
             </select>
           </div>
 
