@@ -1,111 +1,143 @@
 <template>
   <MainLayout>
-    <div class="h-full w-full flex flex-col items-center justify-center">
-      <div class="mb-10">
-        <h1 class="text-3xl">
+    <div class="min-h-screen w-full flex flex-col items-center justify-start pt-10 px-4">
+
+      <!-- HEADER -->
+      <div class="mb-10 text-center">
+        <h1 class="text-2xl font-semibold mb-2">
           Cambio de contraseña
         </h1>
-        <p class="text-lg">
-          Si deseas cambiar tu contraseña, por favor diligencia los campos solicitados.
+        <p class="text-base text-gray-600">
+          Diligencia los campos solicitados para actualizar tu contraseña.
         </p>
       </div>
-      <!--FORM CONTAINER-->
-      <div v-if="showForm" class="px-3 py-4 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
+
+      <!-- FORM -->
+      <div
+        v-if="showForm"
+        class="w-full max-w-md sm:max-w-lg lg:max-w-xl
+               px-6 py-6 border shadow-md rounded-xl bg-gray-100">
+
+        <!-- SIN TOKEN -->
         <template v-if="!isVerified">
-          <div class="text-left mb-2">
-            <label for="user" class="font-semibold block mb-2">Usuario Unibagué</label>
-            <input type="text" id="user" v-model="user.value" placeholder="juan.ospina"
-                   class="rounded border px-3 py-1 w-full">
+          <div class="text-left mb-4">
+            <label class="font-semibold block mb-2">Usuario Unibagué</label>
+            <input
+              v-model="user.value"
+              placeholder="juan.ospina"
+              class="rounded border px-3 py-2 w-full">
           </div>
 
-          <div class="text-left my-4">
-            <label for="role" class="font-semibold block my-2">Eres un ...</label>
-           <select v-model.number="role.value" id="role"
-        class="rounded border px-3 py-1.5 w-full bg-white">
-  <option :value="0">Estudiante o egresado</option>
-  <option :value="1">Administrativo</option>
-</select>
-
+          <div class="text-left mb-4">
+            <label class="font-semibold block mb-2">Eres un ...</label>
+            <select
+              v-model.number="role.value"
+              class="rounded border px-3 py-2 w-full bg-white">
+              <option :value="0">Estudiante o egresado</option>
+              <option :value="1">Administrativo</option>
+            </select>
           </div>
 
-          <div class="text-left mt-4">
-            <label for="password" class="font-semibold block my-2">Contraseña actual</label>
-            <input type="password" id="password" v-model="password.value"
-                   class="rounded border px-3 py-1 w-full">
+          <div class="text-left mb-4">
+            <label class="font-semibold block mb-2">Contraseña actual</label>
+            <input
+              type="password"
+              v-model="password.value"
+              class="rounded border px-3 py-2 w-full">
           </div>
+
+          <hr class="my-5 border-gray-300">
         </template>
 
-        <div class="text-left mt-4">
-          <label for="newPassword" class="font-semibold block my-2">Nueva contraseña</label>
+        <!-- NUEVA CONTRASEÑA -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">Nueva contraseña</label>
+          <input
+            type="password"
+            v-model="newPassword.value"
+            class="rounded border px-3 py-2 w-full">
 
-          <input type="password" id="newPassword" v-model="newPassword.value"
-                 class="rounded border px-3 py-1 w-full">
-          <p class="mt-3">
-            <span v-html="getIcon('UPPERCASE')"></span>
-            Debe contener letras mayúsculas
-          </p>
-          <p>
-            <span v-html="getIcon('LOWERCASE')"></span>
-            Debe contener letras minúsculas
-          </p>
-          <p>
-            <span v-html="getIcon('MIN_LENGTH')"></span>
-            Debe tener una longitud de mínimo 8 caracteres
-          </p>
-          <p>
-            <span v-html="getIcon('DIGITS')"></span>
-            Debe contener al menos un número
-          </p>
-
+          <div class="mt-4 space-y-1 text-sm text-gray-700">
+            <p class="flex items-center gap-2">
+              <span v-html="getIcon('UPPERCASE')"></span> Letras mayúsculas
+            </p>
+            <p class="flex items-center gap-2">
+              <span v-html="getIcon('LOWERCASE')"></span> Letras minúsculas
+            </p>
+            <p class="flex items-center gap-2">
+              <span v-html="getIcon('MIN_LENGTH')"></span> Mínimo 8 caracteres
+            </p>
+            <p class="flex items-center gap-2">
+              <span v-html="getIcon('DIGITS')"></span> Al menos un número
+            </p>
+          </div>
         </div>
-        <div class="text-left mt-3">
-          <label for="confirmNewPassword" class="font-semibold block my-2">Confirma tu nueva contraseña</label>
-          <input type="password" id="confirmNewPassword" v-model="confirmNewPassword.value"
-                 class="rounded border px-3 py-1 w-full">
-          <p class="mt-2">
+
+        <!-- CONFIRM -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">
+            Confirmar contraseña
+          </label>
+          <input
+            type="password"
+            v-model="confirmNewPassword.value"
+            class="rounded border px-3 py-2 w-full">
+
+          <p
+            v-if="confirmNewPassword.errors"
+            class="mt-2 text-sm text-red-600">
             {{ confirmNewPassword.errors }}
           </p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 justify-between w-full mt-4 ">
-          <div>
-            <router-link class="rounded py-2 text-center w-full bg-gray-200 block"
-                         :to="{name:'home'}">
-              Ir atrás
-            </router-link>
-          </div>
-          <div>
-            <button
-                :disabled="!isFormValid"
-                :class="{'cursor-not-allowed':!isFormValid}"
-                class="rounded py-2 text-center w-full text-white" style="background-color: #0f1f39"
-                @click="submitForm">
-              Cambiar
-            </button>
-          </div>
+
+        <!-- ACTIONS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+          <router-link
+            class="rounded py-2 text-center w-full bg-gray-200 block"
+            :to="{ name: 'home' }">
+            Ir atrás
+          </router-link>
+
+          <button
+            :disabled="!isFormValid"
+            @click="submitForm"
+            class="rounded py-2 text-center w-full font-semibold transition
+                   flex items-center justify-center
+                   text-white"
+            :class="!isFormValid
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-[#0f1f39] hover:bg-[#162d5a]'">
+            Cambiar
+          </button>
         </div>
-
       </div>
-      <!--message container-->
-      <div v-else class="px-3 py-4 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
-        {{ message }}
 
-        <button v-if="notFound"
-                @click="showForm = true"
-                class=" rounded py-2 text-center mt-3 w-full text-white" style="background-color: #0f1f39">
-          Ir atrás
-        </button>
+      <!-- RESULT -->
+      <div
+        v-else
+        class="w-full max-w-md px-6 py-6 rounded-xl shadow-md text-center"
+        :class="notFound
+          ? 'bg-red-50 border border-red-300'
+          : 'bg-green-50 border border-green-300'">
 
-        <router-link v-else
-                     class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
-                     :to="{name: 'home'}">
-          Ir atrás
+        <p
+          class="font-semibold mb-2"
+          :class="notFound ? 'text-red-700' : 'text-green-700'">
+          {{ message }}
+        </p>
+
+        <router-link
+          class="rounded py-2 mt-4 w-full text-white block font-semibold"
+          :class="notFound ? 'bg-red-600' : 'bg-[#0f1f39]'"
+          :to="{ name: 'home' }">
+          Volver
         </router-link>
-
       </div>
-    </div>
 
+    </div>
   </MainLayout>
 </template>
+
 
 <script>
 import MainLayout from "@/layouts/MainLayout";

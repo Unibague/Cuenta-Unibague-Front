@@ -1,84 +1,105 @@
 <template>
   <MainLayout>
-    <div class="h-full w-full flex flex-col items-center justify-center">
-      <div class="mb-10">
-        <h1 class="text-3xl p-1">
-          Recuerda tu usuario Unibague
+    <div class="min-h-screen w-full flex flex-col items-center justify-start pt-10 px-4">
+
+      <!-- HEADER -->
+      <div class="mb-10 text-center">
+        <h1 class="text-2xl font-semibold mb-2">
+          Recuerda tu usuario Unibagué
         </h1>
-        <p class="text-lg p-1">
-          Si deseas recordar tu usuario ingresa tu número de documento (sin puntos o comas)
+        <p class="text-base text-gray-600 max-w-lg">
+          Ingresa tu número de documento y fecha de nacimiento
+          (sin puntos ni comas) para consultar tu usuario.
         </p>
       </div>
 
-      <div v-if="showForm"
-           class="p-5 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
-        <div class="text-left my-4">
-          <label for="Ndocument" class="font-semibold block my-2">Número de documento</label>
-          <input type="text" id="Ndocument" v-model="documentNumber.value" placeholder=""
-                 class="rounded border px-3 py-1 w-full">
+      <!-- FORM -->
+      <div
+        v-if="showForm"
+        class="w-full max-w-md sm:max-w-lg
+               px-6 py-6 border shadow-md rounded-xl bg-gray-100">
+
+        <!-- Documento -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">
+            Número de documento
+          </label>
+          <input
+            v-model="documentNumber.value"
+            placeholder="1005839105"
+            class="rounded border px-3 py-2 w-full">
         </div>
 
-        <div class="text-left my-4">
-          <label for="birthday" class="font-semibold block my-2">Fecha de nacimiento</label>
-          <input class="rounded border px-3 py-1 w-full" type="date" v-model="birthday.value" id="birthday"/>
+        <!-- Fecha -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">
+            Fecha de nacimiento
+          </label>
+          <input
+            type="date"
+            v-model="birthday.value"
+            class="rounded border px-3 py-2 w-full">
         </div>
 
-
-        <div class="text-left my-4">
-          <label for="role" class="font-semibold block my-2">Eres un</label>
-          <select class="rounded border px-3 py-1.5 w-full bg-white" type="date" v-model="role.value" id="role">
-            <option value="0">Estudiante o egresado</option>
-            <option value="1">Administrativo</option>
+        <!-- Rol -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">
+            Eres un ...
+          </label>
+          <select
+            v-model.number="role.value"
+            class="rounded border px-3 py-2 w-full bg-white">
+            <option :value="0">Estudiante o egresado</option>
+            <option :value="1">Administrativo</option>
           </select>
         </div>
 
+        <!-- ACTIONS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+          <router-link
+            class="rounded py-2 text-center w-full bg-gray-200 block"
+            :to="{ name: 'home' }">
+            Ir atrás
+          </router-link>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 justify-between w-full mt-4 ">
-
-          <div class="">
-
-            <router-link class="rounded py-2 text-center w-full bg-gray-200 block"
-                         :to="{name:'home'}">
-              Ir atrás
-            </router-link>
-          </div>
-
-          <div class="">
-            <button
-                :disabled="!isFormValid"
-                :class="{'cursor-not-allowed':!isFormValid}"
-                @click="submitForm"
-                class=" rounded py-2 text-center w-full text-white" style="background-color: #0f1f39">
-              Recordar
-            </button>
-
-          </div>
+          <button
+            :disabled="!isFormValid"
+            @click="submitForm"
+            class="rounded py-2 text-center w-full font-semibold transition text-white"
+            :class="!isFormValid
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-[#0f1f39] hover:bg-[#162d5a]'">
+            Recordar
+          </button>
         </div>
-
       </div>
 
-      <div v-else
-           class="p-5 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
-        <p v-html="message">
+      <!-- RESULT -->
+      <div
+        v-else
+        class="w-full max-w-md px-6 py-6 rounded-xl shadow-md text-center"
+        :class="notFound
+          ? 'bg-red-50 border border-red-300'
+          : 'bg-green-50 border border-green-300'">
+
+        <p
+          class="font-semibold mb-2"
+          :class="notFound ? 'text-red-700' : 'text-green-700'"
+          v-html="message">
         </p>
 
-        <button v-if="notFound"
-                @click="showForm = true"
-                class=" rounded py-2 text-center mt-3 w-full text-white" style="background-color: #0f1f39">
-          Ir atrás
-        </button>
-
-        <router-link v-else
-                     class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
-                     :to="{name: 'home'}">
-          Ir atrás
+        <router-link
+          class="rounded py-2 mt-4 w-full text-white block font-semibold"
+          :class="notFound ? 'bg-red-600' : 'bg-[#0f1f39]'"
+          :to="{ name: 'home' }">
+          Volver
         </router-link>
       </div>
+
     </div>
-
-
   </MainLayout>
 </template>
+
 
 <script>
 import MainLayout from "@/layouts/MainLayout";

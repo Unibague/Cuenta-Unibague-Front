@@ -1,28 +1,44 @@
 <template>
   <MainLayout>
-    <div class="container mx-auto px-6 sm:px-10 lg:px-44 my-5">
-      <div class="h-full">
-        <h1 class="text-3xl mb-10">
+    <div class="min-h-screen w-full px-6 sm:px-10 lg:px-44 py-10">
+
+      <!-- HEADER -->
+      <div class="mb-10 text-center">
+        <h1 class="text-3xl font-semibold mb-2">
           Servicios para tu cuenta Unibagué
         </h1>
-
-        <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full mt-4">
-          <router-link
-              class="h-60 text-white p-8 flex flex-col justify-center items-center rounded-2xl shadow-xl cursor-pointer"
-              style="background-color: #0f1f39"
-              v-for="item in items" :key="item.title"
-              :to="item.to">
-            <h2 class="font-semibold text-xl mb-4">
-              {{ item.title }}
-            </h2>
-            <i :class="item.icon+' fa-4x'"></i>
-          </router-link>
-
-        </div>
+        <p class="text-gray-600 text-base">
+          Selecciona el servicio que deseas gestionar
+        </p>
       </div>
+
+      <!-- CARDS -->
+      <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full">
+        <router-link
+          v-for="item in items"
+          :key="item.title"
+          :to="item.to"
+          class="group h-56 p-8 flex flex-col justify-center items-center
+                 rounded-2xl shadow-lg cursor-pointer
+                 transition transform
+                 bg-[#0f1f39] text-white
+                 hover:-translate-y-1 hover:shadow-2xl">
+
+          <i
+            :class="item.icon"
+            class="fa-3x mb-5 transition group-hover:scale-110">
+          </i>
+
+          <h2 class="font-semibold text-lg text-center">
+            {{ item.title }}
+          </h2>
+        </router-link>
+      </div>
+
     </div>
   </MainLayout>
 </template>
+
 
 <script>
 // @ is an alias to /src

@@ -1,105 +1,134 @@
 <template>
   <MainLayout>
-    <div class="h-full w-full flex flex-col items-center justify-center">
-      <div class="mb-10">
-        <h1 class="text-3xl p-1">
+    <div class="min-h-screen w-full flex flex-col items-center justify-start pt-10 px-4">
+
+      <!-- HEADER -->
+      <div class="mb-10 text-center">
+        <h1 class="text-2xl font-semibold mb-2">
           Cambiar correo alterno
         </h1>
-        <p class="text-lg p-1">
-          Si deseas cambiar tu correo alterno ingresa el siguiente formulario
+        <p class="text-base text-gray-600">
+          Ingresa la información solicitada para actualizar tu correo alterno.
         </p>
       </div>
 
+      <!-- FORM -->
+      <div
+        v-if="showForm"
+        class="w-full max-w-md sm:max-w-lg lg:max-w-xl
+               px-6 py-6 border shadow-md rounded-xl bg-gray-100">
 
-      <div v-if="showForm"
-           class="p-5 border shadow rounded-lg bg-gray-100  md:w-1/2 lg:w-1/4">
-        <div class="text-left my-4">
-          <label for="user" class="font-semibold block my-2">Usuario Unibagué</label>
-          <input type="text" id="user" v-model="user.value" placeholder="Miguel.Mateus"
-                 class="rounded border px-3 py-1 w-full">
+        <!-- Usuario -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">Usuario Unibagué</label>
+          <input
+            v-model="user.value"
+            placeholder="miguel.mateus"
+            class="rounded border px-3 py-2 w-full">
         </div>
 
-        <div class="text-left my-4">
-          <label for="role" class="font-semibold block my-2">Eres un ...</label>
-          <select class="rounded border px-3 py-1.5 w-full bg-white" type="date" v-model="role.value" id="role">
-            <option value="0">Estudiante o egresado</option>
-            <option value="1">Administrativo</option>
+        <!-- Rol -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">Eres un ...</label>
+          <select
+            v-model.number="role.value"
+            class="rounded border px-3 py-2 w-full bg-white">
+            <option :value="0">Estudiante o egresado</option>
+            <option :value="1">Administrativo</option>
           </select>
         </div>
 
-        <div class="text-left mt-4">
-          <label for="password" class="font-semibold block my-2">Contraseña actual</label>
-          <input type="password" id="password" v-model="password.value"
-                 class="rounded border px-3 py-1 w-full">
+        <!-- Password -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">Contraseña actual</label>
+          <input
+            type="password"
+            v-model="password.value"
+            class="rounded border px-3 py-2 w-full">
         </div>
 
-        <div class="text-left mt-4">
-          <label for="alternateEmail" class="font-semibold block my-2">Nuevo correo alterno</label>
-          <input type="text" id="alternateEmail" v-model="alternateEmail.value"
-                 class="rounded border px-3 py-1 w-full">
+        <hr class="my-5 border-gray-300">
 
-          <p class="mt-3">
+        <!-- Correo alterno -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">Nuevo correo alterno</label>
+          <input
+            v-model="alternateEmail.value"
+            placeholder="correo@ejemplo.com"
+            class="rounded border px-3 py-2 w-full">
+
+          <p class="mt-2 text-sm text-gray-700 flex items-center gap-2">
             <span v-html="getIcon('NOT_VALID_EMAIL','alternateEmail')"></span>
             Debe ingresar un correo válido
           </p>
-
         </div>
 
-        <div class="text-left mt-4">
-          <label for="confirmAlternateEmail" class="font-semibold block my-2">Confirmacion correo alterno</label>
-          <input type="text" id="confirmAlternateEmail" v-model="confirmAlternateEmail.value"
-                 class="rounded border px-3 py-1 w-full">
-          <p class="mt-3" v-if="(confirmAlternateEmail.value !== '' && confirmAlternateEmail.errors.length > 0)">
-            Debe coincidir con el valor ingresado anteriormente
+        <!-- Confirmación -->
+        <div class="text-left mb-4">
+          <label class="font-semibold block mb-2">Confirmar correo alterno</label>
+          <input
+            v-model="confirmAlternateEmail.value"
+            class="rounded border px-3 py-2 w-full">
+
+          <p
+            v-if="confirmAlternateEmail.errors.length"
+            class="mt-2 text-sm text-red-600">
+            Los correos no coinciden
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 justify-between w-full mt-4 ">
-          <div class="">
-            <router-link class="rounded py-2 text-center w-full bg-gray-200 block"
-                         :to="{name:'home'}">
-              Ir atrás
-            </router-link>
-          </div>
+        <!-- ACTIONS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+          <router-link
+            class="rounded py-2 text-center w-full bg-gray-200 block"
+            :to="{ name: 'home' }">
+            Ir atrás
+          </router-link>
 
-          <div class="">
-            <button
-                :disabled="(!isFormValid || isProcessing)"
-                :class="{'cursor-not-allowed':(!isFormValid || isProcessing)}"
-                @click="submitForm"
-                style="background-color: #0f1f39"
-                class="rounded py-2 text-center w-full text-white">
-              Cambiar
-            </button>
-          </div>
+          <button
+            :disabled="!isFormValid || isProcessing"
+            @click="submitForm"
+            class="rounded py-2 text-center w-full font-semibold transition
+                   flex items-center justify-center gap-2"
+            :class="isProcessing || !isFormValid
+              ? 'bg-gray-400 text-white cursor-not-allowed'
+              : 'bg-[#0f1f39] text-white hover:bg-[#162d5a]'">
+
+            <span
+              v-if="isProcessing"
+              class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+
+            <span>{{ isProcessing ? 'Procesando...' : 'Cambiar' }}</span>
+          </button>
         </div>
-
       </div>
 
-      <div v-else
-           class="p-5 border shadow rounded-lg bg-gray-100 md:w-1/2 lg:w-1/4">
-        <p>
+      <!-- RESULT -->
+      <div
+        v-else
+        class="w-full max-w-md px-6 py-6 rounded-xl shadow-md text-center"
+        :class="notFound
+          ? 'bg-red-50 border border-red-300'
+          : 'bg-green-50 border border-green-300'">
+
+        <p
+          class="font-semibold mb-2"
+          :class="notFound ? 'text-red-700' : 'text-green-700'">
           {{ message }}
         </p>
 
-        <button v-if="notFound"
-                @click="showForm = true"
-                class=" rounded py-2 text-center mt-3 w-full text-white" style="background-color: #0f1f39">
-          Ir atrás
-        </button>
-
-        <router-link v-else
-                     class="rounded py-2 text-center mt-3 w-full text-white block" style="background-color: #0f1f39"
-                     :to="{name: 'home'}">
-
-          Ir atrás
+        <router-link
+          class="rounded py-2 mt-4 w-full text-white block font-semibold"
+          :class="notFound ? 'bg-red-600' : 'bg-[#0f1f39]'"
+          :to="{ name: 'home' }">
+          Volver
         </router-link>
-
       </div>
-    </div>
 
+    </div>
   </MainLayout>
 </template>
+
 
 <script>
 import MainLayout from "@/layouts/MainLayout";
